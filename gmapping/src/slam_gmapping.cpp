@@ -653,8 +653,9 @@ SlamGMapping::computePoseEntropy() {
 void
 SlamGMapping::updateMap(const sensor_msgs::LaserScan& scan)
 {
-
+  std::cerr << "SlamGMapping::updateMap, map_lock try to get" << std::endl;
   boost::mutex::scoped_lock map_lock (m_map_mutex);
+  std::cerr << "SlamGMapping::updateMap, map_lock get" << std::endl;
   GMapping::ScanMatcher matcher;
 
   matcher.setMatchingParameters(m_params.scanMatcherParams);
@@ -707,19 +708,26 @@ SlamGMapping::updateMap(const sensor_msgs::LaserScan& scan)
   map_.map.header.frame_id = tf_.resolve( m_map_frame );
   map_publisher_.publish(map_.map);
   map_meta_publisher_.publish(map_.map.info);
+
+  std::cerr << "SlamGMapping::updateMap, release lock" << std::endl;
 }
 
 bool 
 SlamGMapping::mapCallback(nav_msgs::GetMap::Request  &req,
                           nav_msgs::GetMap::Response &res)
 {
+  std::cerr << "SlamGMapping::mapCallback, map_lock try to get" << std::endl;
   boost::mutex::scoped_lock map_lock (m_map_mutex);
+  std::cerr << "SlamGMapping::mapCallback, map_lock get" << std::endl;
+
   if(m_got_first_map && map_.map.info.width && map_.map.info.height) {
     res = map_;
     return true;
   } else {
     return false;
   }
+
+  std::cerr << "SlamGMapping::mapCallback, release lock" << std::endl;
 }
 
 void SlamGMapping::publishTransform()

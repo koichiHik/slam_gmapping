@@ -5,6 +5,7 @@ cmake_install.cmake
 build/
 bin/
 lib/
+.vscode/
 msg_gen/
 srv_gen/
 *.pyc
